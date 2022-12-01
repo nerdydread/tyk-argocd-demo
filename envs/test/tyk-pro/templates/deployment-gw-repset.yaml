@@ -1,0 +1,135 @@
+---
+# Source: tyk-pro/templates/deployment-gw-repset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: gateway-tyk-pro
+  labels:
+    app: gateway-tyk-pro
+    chart: tyk-pro-0.13.0
+    release: tyk-pro
+    heritage: Helm
+spec:
+  minReadySeconds: 10
+  updateStrategy:
+    # indicate which strategy we want for rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: gateway-tyk-pro
+      release: tyk-pro
+  template:
+    metadata:
+      # Enable backward compatibility to chart 0.8.1.
+      labels:
+        app: gateway-tyk-pro
+        release: tyk-pro
+      annotations:
+        checksum/config: 51640ff49b18521764c0f9244d3a65ade64c7ee74eb1b8dce9ca8234d9bffd0a
+        checksum/secrets: ae44b907c883c60816b350b025cb785787c5d2fc5677fd8ac2c9ba89f3d3b64c
+        checksum/secret-certs: f2554238b05b0b89b385bcbe73f65f37bed942449eaaf63ef08a6d5eaeefa719
+    spec:
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      containers:
+      - name: gateway-tyk-pro
+        image: "tykio/tyk-gateway:v4.2.3"
+        imagePullPolicy: Always
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - all
+        env:
+          - name: TYK_GW_LISTENPORT
+            value: "8080"
+          # Lagacy support for Redis Cluster driver. Driver dropped in v3.0.0.
+          - name: REDIGOCLUSTER_SHARDCOUNT
+            value: "128"
+          - name: TYK_GW_STORAGE_ADDRS
+            value: "redis.tyk.svc.cluster.local:6379"
+          - name: TYK_GW_STORAGE_ENABLECLUSTER
+            value: "false"
+          - name: TYK_GW_STORAGE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: redisPass
+          - name: TYK_GW_STORAGE_DATABASE
+            value: "0"
+          - name: TYK_GW_STORAGE_USESSL
+            value: "false"
+        # Enable backward compatibility to chart 0.8.1.
+          - name: TYK_GW_DBAPPCONFOPTIONS_NODEISSEGMENTED
+            value: "false"
+          - name: TYK_GW_DBAPPCONFOPTIONS_CONNECTIONSTRING
+            value: "http://dashboard-svc-tyk-pro.tyk:3000"
+          - name: TYK_GW_POLICIES_POLICYCONNECTIONSTRING
+            value: "http://dashboard-svc-tyk-pro.tyk:3000"
+          - name: TYK_GW_SECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: APISecret
+          - name: TYK_GW_NODESECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: APISecret
+        # Enable backward compatibility to chart 0.8.1.
+          - name: TYK_GW_DBAPPCONFOPTIONS_TAGS
+            value: ""
+          - name: TYK_GW_HTTPSERVEROPTIONS_USESSL
+            value: "false"
+        command: ["/opt/tyk-gateway/tyk", "--conf=/etc/tyk-gateway/tyk.conf"]
+        workingDir: /opt/tyk-gateway
+        ports:
+        - containerPort: 8080
+        resources:
+            {}
+        volumeMounts:
+          - name: tyk-mgmt-gateway-conf
+            mountPath: /etc/tyk-gateway
+          - name: tyk-scratch
+            mountPath: /mnt/tyk-gateway
+          - name: tyk-pro-default-cert
+            mountPath: /etc/certs
+        livenessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /hello
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 3
+          failureThreshold: 2
+        readinessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /hello
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+      securityContext:
+          fsGroup: 2000
+          runAsUser: 1000
+      volumes:
+        - name: tyk-mgmt-gateway-conf
+          configMap:
+            name: mgmt-gateway-conf-tyk-pro
+            items:
+              - key: tyk_mgmt.conf
+                path: tyk.conf
+        - name: tyk-scratch
+          emptyDir: {}
+        - name: tyk-pro-default-cert
+          secret:
+            secretName: tyk-pro-default-cert

@@ -1,0 +1,149 @@
+---
+# Source: tyk-pro/templates/deployment-dash.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-tyk-pro
+  labels:
+    app: dashboard-tyk-pro
+    chart: tyk-pro-0.13.0
+    release: tyk-pro
+    heritage: Helm
+spec:
+  replicas: 1
+  minReadySeconds: 5
+  strategy:
+    # indicate which strategy we want for rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: dashboard-tyk-pro
+      release: tyk-pro
+  template:
+    metadata:
+      labels:
+        app: dashboard-tyk-pro
+        release: tyk-pro
+      annotations:
+      # Enable backward compatibility to chart 0.8.1.
+        checksum/config: 5133e0e4bb45d14cb8b3ffe40668f229ed78bbef4a4bb3847a65764f40ea8041
+        checksum/secrets: ae44b907c883c60816b350b025cb785787c5d2fc5677fd8ac2c9ba89f3d3b64c
+    spec:
+      containers:
+      - image: "tykio/tyk-dashboard:v4.2.3"
+        imagePullPolicy: Always
+        name: dashboard-tyk-pro
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - all
+        env:
+          - name: TYK_DB_LISTENPORT
+            value: "3000"
+          # Legacy support for Redis Cluster driver. Driver dropped in v3.0.0.
+          - name: REDIGOCLUSTER_SHARDCOUNT
+            value: "128"
+          - name: TYK_DB_TYKAPI_HOST
+            value: "http://gateway-svc-tyk-pro.tyk"
+          - name: TYK_DB_TYKAPI_PORT
+            value: "8080"
+          - name: TYK_DB_TYKAPI_SECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: APISecret
+
+          - name: TYK_DB_ADMINSECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: AdminSecret
+          - name: TYK_DB_NODESECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: APISecret
+          - name: TYK_DB_LICENSEKEY
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: DashLicense
+            
+          - name: TYK_DB_REDISADDRS
+            value: "redis.tyk.svc.cluster.local:6379"
+          - name: TYK_DB_ENABLECLUSTER
+            value: "false"
+          - name: TYK_DB_REDISPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secrets-tyk-pro 
+                key: redisPass
+          - name: TYK_DB_REDISUSESSL
+            value: "false"
+          - name: TYK_DB_REDISSSLINSECURESKIPVERIFY
+            value: "true"
+            
+          - name: TYK_DB_HTTPSERVEROPTIONS_USESSL
+            value: "false"
+
+          - name: TYK_DB_HOSTCONFIG_HOSTNAME
+            value: "tyk-dashboard.local"
+          - name: TYK_DB_HOSTCONFIG_GATEWAYHOSTNAME
+            value: "tyk-gw.local"
+          - name: TYK_DB_HOSTCONFIG_PORTALROOTPATH
+            value:  /
+          
+          - name: TYK_DB_STORAGE_MAIN_TYPE
+            value: "mongo"
+          - name: TYK_DB_MONGOURL
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-pro 
+                key: mongoURL
+          - name: TYK_DB_MONGOUSESSL
+            value: "false"
+          
+        resources:
+            {}
+        command: ["/opt/tyk-dashboard/tyk-analytics", "--conf=/etc/tyk-dashboard/tyk_analytics.conf"]
+        workingDir: /opt/tyk-dashboard
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+          - name: tyk-dashboard-conf
+            mountPath: /etc/tyk-dashboard
+        livenessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
+          failureThreshold: 2
+        readinessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+      securityContext:
+          fsGroup: 2000
+          runAsUser: 1000
+      volumes:
+        - name: tyk-dashboard-conf
+          configMap:
+            name: dashboard-conf-tyk-pro
+            items:
+              - key: tyk_analytics.conf
+                path: tyk_analytics.conf

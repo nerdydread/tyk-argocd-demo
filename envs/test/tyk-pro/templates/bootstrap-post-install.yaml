@@ -1,0 +1,84 @@
+---
+# Source: tyk-pro/templates/bootstrap-post-install.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name:  boostrap-post-install
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/instance: "tyk-pro"
+
+    # Removed the use of appVersion since it's not accurate. We'll put it back in v1.0
+    # when every app will have its own a chart
+    # app.kubernetes.io/version: ""
+
+    helm.sh/chart: "tyk-pro-0.13.0"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: “false”
+    spec:
+      serviceAccountName: k8s-bootstrap-role
+      containers:
+        - name: bootstrap-tyk-post-install
+          image: tykio/tyk-k8s-bootstrap-post:latest
+          command: [ './app/bin/bootstrap-app-post' ]
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TYK_ADMIN_FIRST_NAME
+              value: "admin"
+            - name: TYK_ADMIN_LAST_NAME
+              value: "user"
+            - name: TYK_ADMIN_EMAIL
+              value: "admin-user@example.org"
+            - name: TYK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tyk-pro-login-details
+                  key: TYK_PASS
+            - name: TYK_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: TYK_DASHBOARD_PROTO
+              value: http
+            - name: TYK_DASHBOARD_SVC
+              value: dashboard-svc-tyk-pro
+            - name: TYK_DB_LISTENPORT
+              value: "3000"
+            - name: TYK_DB_LICENSEKEY
+              value: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGxvd2VkX25vZGVzIjoiNjdlNDQzZjAtNDc2OC00NTkyLTQ2NTQtODQ3NDE3MDk1MWM2LGVmOGYyNDVkLWM1NjMtNDdkZi01ZTdkLTFmMGY1YjVkYzgzNCwxYjQ3MzBhMy01ZThjLTQzM2YtNTBlNy0yZWM2OGRlNGFkNjAsYTI2OWEzMzAtZGE5MC00ZTg5LTZmNDAtOWUyZmRhNTgwY2M5LDU5ZjZhYTUyLWE5NTgtNDhiZS01YTliLWFiOGUzMzI3NWI0Niw3NjdjZmZhNi1iZjFkLTQ0NmEtNjU2Zi1jY2Q3MTlmZTBkNmUsMjE3NjNkYmMtZWQ4Zi00NDhhLTY3NGEtNDU2M2I5MmM3MDVlLGU5MjAzZTY0LTBkYWMtNDc2OS00ZDIxLTQwNTBjZDc4ZTRiYSwzZWNiZWQ4OC03YTZlLTQ0NmUtNzY0Ny03NTU3ZDE3NWQ4ZDAsMzhlN2IzZGYtZTI3YS00OGQyLTQyZGItZjY1MWQ4YTYyYmVhIiwiZXhwIjoxNjcxMTg4NzI5LCJpYXQiOjE2Njg1OTY3MjksIm93bmVyIjoiNjFjY2U2MmMxMjFjYTEwMDAxOGJiMTkwIiwic2NvcGUiOiJtdWx0aV90ZWFtLHJiYWMsZ3JhcGgsZmVkZXJhdGlvbiIsInYiOiIyIn0.p-DbrRbRKGXjyboJ5vIuGJPS7mZaI6XoS-bpSH4AEYPvkKnMNOBjbPYThNsP5_ar0SqmDNDGZa4UAA5hc6OoB6MNfS4WgoS2t5JVa16UcqyZ4a-HETTRhPEB6V4VkzJNmrS2uNiQZyT03dZkJyR_Mity8xrewZdrs6gvq1M0A0uFvjqnzDCbdQ5fo8bgvrHKol1I2aDfoRoDvl9UAAXHQnJGp_-GXXDftHhGabYgDUmWNDv_t3UkwL3fyiKSJSevdhT1MXTlAg0lHyxkmraWtvbRJo6Rj_1jA3GvXD1ZE6nT0ZSyGqF361R4nfOwdxWh2JXOkrIrAA86zKKE6jX3Rg"
+            - name: TYK_ADMIN_SECRET
+              value: "12345"
+            - name: TYK_ORG_NAME
+              value: "Default Org"
+            - name: TYK_ORG_CNAME
+              value: "tyk-portal.local"
+            - name: DASHBOARD_ENABLED
+              value: "true"
+            - name: OPERATOR_SECRET_ENABLED
+              value: "true"
+            - name: OPERATOR_SECRET_NAME
+              value: "tyk-operator-conf"
+            - name: ENTERPRISE_PORTAL_SECRET_ENABLED
+              value: "true"
+            - name: ENTERPRISE_PORTAL_SECRET_NAME
+              value: "tyk-enterprise-portal-conf"
+            - name: BOOTSTRAP_DASHBOARD
+              value: "true"
+            - name: GATEWAY_ADDRESS
+              value: http://gateway-svc-tyk-pro.tyk.svc.cluster.local:8080
+            - name: BOOTSTRAP_PORTAL
+              value: "true"
+            - name: TYK_DASHBOARD_DEPLOY
+              value: dashboard-tyk-pro
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 0

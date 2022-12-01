@@ -1,0 +1,21 @@
+---
+# Source: tyk-pro/templates/service-dash.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-svc-tyk-pro
+  labels:
+    app: dashboard-svc-tyk-pro
+    chart: tyk-pro-0.13.0
+    release: tyk-pro
+    heritage: Helm
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: dashboard-tyk-pro
+    release: tyk-pro

@@ -1,0 +1,21 @@
+---
+# Source: tyk-pro/templates/service-gw.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-svc-tyk-pro
+  labels:
+    app: gateway-svc-tyk-pro
+    chart: tyk-pro-0.13.0
+    release: tyk-pro
+    heritage: Helm
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: gateway-tyk-pro
+    release: tyk-pro
