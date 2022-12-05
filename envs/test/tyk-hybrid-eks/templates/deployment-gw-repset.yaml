@@ -3,11 +3,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway-tyk-hybrid
+  name: gateway-tyk-hybrid-eks
   labels:
-    app: gateway-tyk-hybrid
+    app: gateway-tyk-hybrid-eks
     chart: tyk-hybrid-0.13.0
-    release: tyk-hybrid
+    release: tyk-hybrid-eks
     heritage: Helm
 spec:
   replicas: 2
@@ -20,17 +20,17 @@ spec:
       maxUnavailable: 1
   selector:
     matchLabels:
-      app: gateway-tyk-hybrid
-      release: tyk-hybrid
+      app: gateway-tyk-hybrid-eks
+      release: tyk-hybrid-eks
   template:
     metadata:
       labels:
-        app: gateway-tyk-hybrid
-        release: tyk-hybrid
+        app: gateway-tyk-hybrid-eks
+        release: tyk-hybrid-eks
       annotations:
-        checksum/config: e91487f0285425e6ffea021ebac5138168d301ca95f4f49241f5a14b6010269d
-        checksum/secrets: 4f6af2438de325abaed650bd960f9d728871fa80fa4057fc63c518160f5d4097
-        checksum/secret-certs: d14681c4d4a780b6ae752571d841816505f235fe73b35671bb6972387d97682a
+        checksum/config: b98e8006ec9f57339ff7d252022a30d1383de69ad1d17bd30d95bf13a8bc51e9
+        checksum/secrets: b5f5910e0e1186aa57b55bab269292d79a5bfae2e4fb3bbad2f26434907186c7
+        checksum/secret-certs: ec76b6377a23090b6977b832aae241aae0cd30a429d4b2b873a17fb76a6e39ef
     spec:
       tolerations:
         - effect: NoSchedule
@@ -62,7 +62,7 @@ spec:
           - name: TYK_GW_STORAGE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name:  secrets-tyk-hybrid 
+                name:  secrets-tyk-hybrid-eks 
                 key: redisPass
           - name: TYK_GW_STORAGE_USESSL
             value: "false"
@@ -71,17 +71,17 @@ spec:
           - name: TYK_GW_SLAVEOPTIONS_RPCKEY
             valueFrom:
               secretKeyRef:
-                name:  secrets-tyk-hybrid 
+                name:  secrets-tyk-hybrid-eks 
                 key: rpcKey
           - name: TYK_GW_SLAVEOPTIONS_APIKEY
             valueFrom:
               secretKeyRef:
-                name:  secrets-tyk-hybrid 
+                name:  secrets-tyk-hybrid-eks 
                 key: apiKey
           - name: TYK_GW_SECRET
             valueFrom:
               secretKeyRef:
-                name:  secrets-tyk-hybrid 
+                name:  secrets-tyk-hybrid-eks 
                 key: APISecret
           - name: TYK_GW_SLAVEOPTIONS_CONNECTIONSTRING
             value: "sticky-monocle-hyb.aws-use1.cloud-ara.tyk.io:443"
@@ -92,13 +92,13 @@ spec:
           - name: TYK_GW_SLAVEOPTIONS_SSLINSECURESKIPVERIFY
             value: "true"
           - name: TYK_GW_SLAVEOPTIONS_GROUPID
-            value: "my-eks"
+            value: "andy-eks"
         # Enable backward compatibility to chart 0.5.1.
           - name: TYK_GW_DBAPPCONFOPTIONS_NODEISSEGMENTED
             value: "true"
         # Enable backward compatibility to chart 0.5.1.
           - name: TYK_GW_DBAPPCONFOPTIONS_TAGS
-            value: "my-eks"
+            value: "andy-eks"
         command: ["/opt/tyk-gateway/tyk", "--conf=/etc/tyk-gateway/tyk.conf"]
         workingDir: /opt/tyk-gateway
         ports:
@@ -108,7 +108,7 @@ spec:
         volumeMounts:
           - name: hybrid-gateway-conf
             mountPath: /etc/tyk-gateway
-          - name: tyk-hybrid-default-cert
+          - name: tyk-hybrid-eks-default-cert
             mountPath: /etc/certs
           - name: tyk-scratch
             mountPath: /mnt/tyk-gateway
@@ -136,12 +136,12 @@ spec:
       volumes:
         - name: hybrid-gateway-conf
           configMap:
-            name: hybrid-gateway-conf-tyk-hybrid
+            name: hybrid-gateway-conf-tyk-hybrid-eks
             items:
               - key: tyk_hybrid.conf
                 path: tyk.conf
         - name: tyk-scratch
           emptyDir: {}
-        - name: tyk-hybrid-default-cert
+        - name: tyk-hybrid-eks-default-cert
           secret:
-            secretName: tyk-hybrid-default-cert
+            secretName: tyk-hybrid-eks-default-cert

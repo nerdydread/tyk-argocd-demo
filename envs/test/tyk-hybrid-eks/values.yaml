@@ -62,7 +62,7 @@ gateway:
   # Also be sure to match API segmentation tags with the tags selected below.
   sharding:
     enabled: true
-    tags: "my-eks"
+    tags: "andy-eks"
   # When true, sets the gateway protocol to HTTPS.
   tls: false
   # For on premise MDCB setups simply change the connection string to point to
@@ -81,7 +81,7 @@ gateway:
     # Required when running multiple isolated clusters each having their own Redis instance.
     # Must be the same across all the gateways of a cluster which share a Redis.
     # Must be unique per cluster.
-    groupId: "my-eks"
+    groupId: "andy-eks"
     #
     # For a classic cloud hybrid gateway use these settings:
     #
