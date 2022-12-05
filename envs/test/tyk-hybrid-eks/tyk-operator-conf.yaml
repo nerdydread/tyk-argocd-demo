@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  TYK_AUTH: MWIxZjIyODhlMmFlNDllZTU4ZmUyN2ZlNmRiYzk0Zjg=
+  TYK_MODE: cHJv
+  TYK_ORG: NjM3ZjQ0MjAyM2Q5ZjcwMDAxZDkwMmFh
+  TYK_TLS_INSECURE_SKIP_VERIFY: dHJ1ZQ==
+  TYK_URL: aHR0cHM6Ly9zdGlja3ktbW9ub2NsZS1hZG0uYXdzLXVzZTEuY2xvdWQtYXJhLnR5ay5pbw==
+kind: Secret
+metadata:
+  creationTimestamp: "2022-12-05T14:56:10Z"
+  name: tyk-operator-conf
+  namespace: tyk
+  resourceVersion: "1625760"
+  uid: f17901d2-34cd-40f1-8223-82a7f179cd54
+type: Opaque
