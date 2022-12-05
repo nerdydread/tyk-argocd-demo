@@ -1,0 +1,22 @@
+---
+# Source: tyk-hybrid/templates/service-gw.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-svc-tyk-hybrid
+  labels:
+    app: gateway-svc-tyk-hybrid
+    chart: tyk-hybrid-0.13.0
+    release: tyk-hybrid
+    heritage: Helm
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 443
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: gateway-tyk-hybrid
+    release: tyk-hybrid
+  externalTrafficPolicy: Local

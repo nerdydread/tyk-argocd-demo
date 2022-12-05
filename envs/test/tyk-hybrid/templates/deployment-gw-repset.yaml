@@ -1,0 +1,147 @@
+---
+# Source: tyk-hybrid/templates/deployment-gw-repset.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-tyk-hybrid
+  labels:
+    app: gateway-tyk-hybrid
+    chart: tyk-hybrid-0.13.0
+    release: tyk-hybrid
+    heritage: Helm
+spec:
+  replicas: 2
+  minReadySeconds: 10
+  strategy:
+    # indicate which strategy we want for rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: gateway-tyk-hybrid
+      release: tyk-hybrid
+  template:
+    metadata:
+      labels:
+        app: gateway-tyk-hybrid
+        release: tyk-hybrid
+      annotations:
+        checksum/config: e91487f0285425e6ffea021ebac5138168d301ca95f4f49241f5a14b6010269d
+        checksum/secrets: 4f6af2438de325abaed650bd960f9d728871fa80fa4057fc63c518160f5d4097
+        checksum/secret-certs: d14681c4d4a780b6ae752571d841816505f235fe73b35671bb6972387d97682a
+    spec:
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      containers:
+      - name: gateway-tyk-hybrid
+        image: "tykio/tyk-gateway:v4.2.3"
+        imagePullPolicy: Always
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - all
+        env:
+          - name: TYK_GW_LISTENPORT
+            value: "8080"
+          # Lagacy support for Redis Cluster driver. Driver dropped in v3.0.0.
+          - name: REDIGOCLUSTER_SHARDCOUNT
+            value: "128"
+          - name: TYK_GW_STORAGE_ADDRS
+            value: "andy-redis.ti3wwj.ng.0001.euw2.cache.amazonaws.com:6379"
+          - name: TYK_GW_STORAGE_ENABLECLUSTER
+            value: "false"
+          - name: TYK_GW_STORAGE_DATABASE
+            value: "0"
+          - name: TYK_GW_STORAGE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-hybrid 
+                key: redisPass
+          - name: TYK_GW_STORAGE_USESSL
+            value: "false"
+          - name: TYK_GW_HTTPSERVEROPTIONS_USESSL
+            value: "false"
+          - name: TYK_GW_SLAVEOPTIONS_RPCKEY
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-hybrid 
+                key: rpcKey
+          - name: TYK_GW_SLAVEOPTIONS_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-hybrid 
+                key: apiKey
+          - name: TYK_GW_SECRET
+            valueFrom:
+              secretKeyRef:
+                name:  secrets-tyk-hybrid 
+                key: APISecret
+          - name: TYK_GW_SLAVEOPTIONS_CONNECTIONSTRING
+            value: "sticky-monocle-hyb.aws-use1.cloud-ara.tyk.io:443"
+          - name: TYK_GW_SLAVEOPTIONS_USESSL
+            value: "true"
+          - name: TYK_GW_SLAVEOPTIONS_BINDTOSLUGSINSTEADOFLISTENPATHS
+            value: "false"
+          - name: TYK_GW_SLAVEOPTIONS_SSLINSECURESKIPVERIFY
+            value: "true"
+          - name: TYK_GW_SLAVEOPTIONS_GROUPID
+            value: "my-eks"
+        # Enable backward compatibility to chart 0.5.1.
+          - name: TYK_GW_DBAPPCONFOPTIONS_NODEISSEGMENTED
+            value: "true"
+        # Enable backward compatibility to chart 0.5.1.
+          - name: TYK_GW_DBAPPCONFOPTIONS_TAGS
+            value: "my-eks"
+        command: ["/opt/tyk-gateway/tyk", "--conf=/etc/tyk-gateway/tyk.conf"]
+        workingDir: /opt/tyk-gateway
+        ports:
+        - containerPort: 8080
+        resources:
+            {}
+        volumeMounts:
+          - name: hybrid-gateway-conf
+            mountPath: /etc/tyk-gateway
+          - name: tyk-hybrid-default-cert
+            mountPath: /etc/certs
+          - name: tyk-scratch
+            mountPath: /mnt/tyk-gateway
+        livenessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /hello
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 3
+          failureThreshold: 2
+        readinessProbe:
+          httpGet:
+            scheme: "HTTP"
+            path: /hello
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+      securityContext:
+          fsGroup: 2000
+          runAsUser: 1000
+      volumes:
+        - name: hybrid-gateway-conf
+          configMap:
+            name: hybrid-gateway-conf-tyk-hybrid
+            items:
+              - key: tyk_hybrid.conf
+                path: tyk.conf
+        - name: tyk-scratch
+          emptyDir: {}
+        - name: tyk-hybrid-default-cert
+          secret:
+            secretName: tyk-hybrid-default-cert
