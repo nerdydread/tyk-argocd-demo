@@ -5,6 +5,8 @@ metadata:
 spec:
   name: operator-httpbin
   use_keyless: true
+  tags:
+    - external
   protocol: http
   active: true
   proxy:
