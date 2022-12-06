@@ -20,7 +20,7 @@ spec:
   jwt_identity_base_field: clientId
   jwt_policy_field_name: pol
   jwt_default_policies:
-   - tyk/jwt-policy
+    - tyk/jwt-policy
 ---
 apiVersion: tyk.tyk.io/v1alpha1
 kind: SecurityPolicy
