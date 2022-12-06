@@ -6,7 +6,7 @@ spec:
   name: operator-httpbin
   use_keyless: true
   tags:
-    - external
+    - andy-eks
   protocol: http
   active: true
   proxy:
