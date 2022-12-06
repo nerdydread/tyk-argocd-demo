@@ -33,6 +33,8 @@ spec:
   rate: 10
   per: 60
   quota_max: -1
+  throttle_interval: -1
+  throttle_retry_limit: -1
 ---
 apiVersion: tyk.tyk.io/v1alpha1
 kind: APIDescription
