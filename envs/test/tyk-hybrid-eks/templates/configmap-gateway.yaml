@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: hybrid-gateway-conf-tyk-hybrid-eks
+  name: hybrid-gateway-conf-tyk-hybrid
   labels:
-    app: gateway-tyk-hybrid-eks
+    app: gateway-tyk-hybrid
     chart: tyk-hybrid-0.13.0
-    release: tyk-hybrid-eks
+    release: tyk-hybrid
     heritage: Helm
 data:
   tyk_hybrid.conf: |

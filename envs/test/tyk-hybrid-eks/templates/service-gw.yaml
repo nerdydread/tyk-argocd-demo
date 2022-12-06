@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gateway-svc-tyk-hybrid-eks
+  name: gateway-svc-tyk-hybrid
   labels:
-    app: gateway-svc-tyk-hybrid-eks
+    app: gateway-svc-tyk-hybrid
     chart: tyk-hybrid-0.13.0
-    release: tyk-hybrid-eks
+    release: tyk-hybrid
     heritage: Helm
 spec:
   type: LoadBalancer
@@ -17,6 +17,6 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: gateway-tyk-hybrid-eks
-    release: tyk-hybrid-eks
+    app: gateway-tyk-hybrid
+    release: tyk-hybrid
   externalTrafficPolicy: Local

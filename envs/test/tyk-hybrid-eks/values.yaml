@@ -142,7 +142,12 @@ gateway:
     - key: node-role.kubernetes.io/master
       effect: NoSchedule
   affinity: {}
-  extraEnvs: []
+  extraEnvs: [
+    {
+      name: TYK_GW_POLICIES_ALLOWEXPLICITPOLICYID,
+      value: "true"
+    }
+  ]
   mounts: []
 
 rbac: true
