@@ -30,6 +30,8 @@ spec:
   active: true
   name: operator-httpbin-policy
   state: active
+  rate: 10
+  per: 60
 ---
 apiVersion: tyk.tyk.io/v1alpha1
 kind: APIDescription
