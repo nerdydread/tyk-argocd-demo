@@ -8,6 +8,7 @@ spec:
   #use_standard_auth: true
   tags:
     - andy-eks
+    - edge
   protocol: http
   active: true
   proxy:
