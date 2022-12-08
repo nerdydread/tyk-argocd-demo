@@ -4,8 +4,8 @@ metadata:
   name: operator-httpbin
 spec:
   name: operator-httpbin
-  #use_keyless: true
-  use_standard_auth: true
+  use_keyless: true
+  #use_standard_auth: true
   tags:
     - andy-eks
   protocol: http
@@ -14,51 +14,51 @@ spec:
     target_url: http://httpbin.org
     listen_path: /operator-httpbin
     strip_listen_path: true
-  strip_auth_data: true
----
-apiVersion: tyk.tyk.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: operator-httpbin-policy
-  namespace: tyk
-spec:
-  access_rights_array:
-    - name: operator-httpbin
-      namespace: tyk
-      versions:
-        - Default
-  active: true
-  name: operator-httpbin-policy
-  state: active
-  rate: 10
-  per: 60
-  quota_max: -1
-  throttle_interval: -1
-  throttle_retry_limit: -1
----
-apiVersion: tyk.tyk.io/v1alpha1
-kind: APIDescription
-metadata:
-  name: operator-httpbin
-  namespace: tyk
-spec:
-  name: "Operator HTTPBin"
-  show: true
-  auth_type: authToken
-  policyRef:
-    name: operator-httpbin-policy
-    namespace: tyk
-  docs:
-    documentation: "https://httpbin.org/spec.json"
-    doc_type: swagger_custom_url
----
-apiVersion: tyk.tyk.io/v1alpha1
-kind: PortalAPICatalogue
-metadata:
-  name: operator-httpbin
-  namespace: tyk
-spec:
-  apis:
-    - apiDescriptionRef:
-        name: operator-httpbin
-        namespace: tyk  
+  #strip_auth_data: true
+# ---
+# apiVersion: tyk.tyk.io/v1alpha1
+# kind: SecurityPolicy
+# metadata:
+#   name: operator-httpbin-policy
+#   namespace: tyk
+# spec:
+#   access_rights_array:
+#     - name: operator-httpbin
+#       namespace: tyk
+#       versions:
+#         - Default
+#   active: true
+#   name: operator-httpbin-policy
+#   state: active
+#   rate: 10
+#   per: 60
+#   quota_max: -1
+#   throttle_interval: -1
+#   throttle_retry_limit: -1
+# ---
+# apiVersion: tyk.tyk.io/v1alpha1
+# kind: APIDescription
+# metadata:
+#   name: operator-httpbin
+#   namespace: tyk
+# spec:
+#   name: "Operator HTTPBin"
+#   show: true
+#   auth_type: authToken
+#   policyRef:
+#     name: operator-httpbin-policy
+#     namespace: tyk
+#   docs:
+#     documentation: "https://httpbin.org/spec.json"
+#     doc_type: swagger_custom_url
+# ---
+# apiVersion: tyk.tyk.io/v1alpha1
+# kind: PortalAPICatalogue
+# metadata:
+#   name: operator-httpbin
+#   namespace: tyk
+# spec:
+#   apis:
+#     - apiDescriptionRef:
+#         name: operator-httpbin
+#         namespace: tyk  
