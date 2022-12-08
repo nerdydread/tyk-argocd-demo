@@ -10,7 +10,7 @@ metadata:
     release: tyk-hybrid-eks
     heritage: Helm
 spec:
-  replicas: 4
+  replicas: 2
   minReadySeconds: 10
   strategy:
     # indicate which strategy we want for rolling update
