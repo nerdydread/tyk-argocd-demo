@@ -6,7 +6,7 @@ metadata:
   name: dashboard-tyk-pro
   labels:
     app: dashboard-tyk-pro
-    chart: tyk-pro-0.13.0
+    chart: tyk-pro-0.13.2
     release: tyk-pro
     heritage: Helm
 spec:
@@ -29,8 +29,8 @@ spec:
         release: tyk-pro
       annotations:
       # Enable backward compatibility to chart 0.8.1.
-        checksum/config: 5133e0e4bb45d14cb8b3ffe40668f229ed78bbef4a4bb3847a65764f40ea8041
-        checksum/secrets: ae44b907c883c60816b350b025cb785787c5d2fc5677fd8ac2c9ba89f3d3b64c
+        checksum/config: c2c98327cc452d5f67d2b895fee0369303d3f6bc74a86d320eb59245cc7a8b24
+        checksum/secrets: 91b186159cd45d5b0ebabf650343c3c6c54c5943cf6bfebf35cd38e37637f781
     spec:
       containers:
       - image: "tykio/tyk-dashboard:v4.2.3"

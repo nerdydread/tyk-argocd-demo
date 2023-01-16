@@ -6,7 +6,7 @@ metadata:
   name: pump-conf-tyk-pro
   labels:
     app: pump-tyk-pro
-    chart: tyk-pro-0.13.0
+    chart: tyk-pro-0.13.2
     release: tyk-pro
     heritage: Helm
 data:

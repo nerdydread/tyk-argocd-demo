@@ -6,7 +6,7 @@ metadata:
   name: pump-tyk-pro
   labels:
     app: pump-tyk-pro
-    chart: tyk-pro-0.13.0
+    chart: tyk-pro-0.13.2
     release: tyk-pro
     heritage: Helm
 spec:
@@ -21,8 +21,8 @@ spec:
         app: pump-tyk-pro
         release: tyk-pro
       annotations:
-        checksum/config: eea4cb7008fad300e5e3e92da49244b2a7ed798824c3206698660919ede9f306
-        checksum/secrets: ae44b907c883c60816b350b025cb785787c5d2fc5677fd8ac2c9ba89f3d3b64c
+        checksum/config: bbac60bb81abad1a583217a4239e2c45e70635ee82b5c13a716a37d07ecf8eda
+        checksum/secrets: 91b186159cd45d5b0ebabf650343c3c6c54c5943cf6bfebf35cd38e37637f781
     spec:
       containers:
       - name: pump-tyk-pro

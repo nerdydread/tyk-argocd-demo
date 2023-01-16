@@ -6,7 +6,7 @@ metadata:
   name: dashboard-svc-tyk-pro
   labels:
     app: dashboard-svc-tyk-pro
-    chart: tyk-pro-0.13.0
+    chart: tyk-pro-0.13.2
     release: tyk-pro
     heritage: Helm
 spec:

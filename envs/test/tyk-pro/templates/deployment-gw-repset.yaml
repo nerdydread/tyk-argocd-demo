@@ -6,7 +6,7 @@ metadata:
   name: gateway-tyk-pro
   labels:
     app: gateway-tyk-pro
-    chart: tyk-pro-0.13.0
+    chart: tyk-pro-0.13.2
     release: tyk-pro
     heritage: Helm
 spec:
@@ -29,9 +29,9 @@ spec:
         app: gateway-tyk-pro
         release: tyk-pro
       annotations:
-        checksum/config: 51640ff49b18521764c0f9244d3a65ade64c7ee74eb1b8dce9ca8234d9bffd0a
-        checksum/secrets: ae44b907c883c60816b350b025cb785787c5d2fc5677fd8ac2c9ba89f3d3b64c
-        checksum/secret-certs: f2554238b05b0b89b385bcbe73f65f37bed942449eaaf63ef08a6d5eaeefa719
+        checksum/config: e7e2e29c2cda8b6eb2d335952935ea9f8426fcbdf4006ac8ff8039f6edb0bbd3
+        checksum/secrets: 91b186159cd45d5b0ebabf650343c3c6c54c5943cf6bfebf35cd38e37637f781
+        checksum/secret-certs: 88ac75c0720bc26d2edad817f0a94ccdd72b7819ee40e515fe9af0a7dab55e8e
     spec:
       tolerations:
         - effect: NoSchedule

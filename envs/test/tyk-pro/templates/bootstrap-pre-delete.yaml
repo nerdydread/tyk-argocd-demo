@@ -12,7 +12,7 @@ metadata:
     # when every app will have its own a chart
     # app.kubernetes.io/version: ""
 
-    helm.sh/chart: "tyk-pro-0.13.0"
+    helm.sh/chart: "tyk-pro-0.13.2"
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
