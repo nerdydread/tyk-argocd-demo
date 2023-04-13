@@ -12,9 +12,13 @@ metadata:
     release: tyk-hybrid-eks
     heritage: Helm
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 443
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  - port: 80
     targetPort: 8080
     protocol: TCP
     name: http
