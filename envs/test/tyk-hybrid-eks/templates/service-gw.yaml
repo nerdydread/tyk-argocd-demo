@@ -3,6 +3,8 @@
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
   name: gateway-svc-tyk-hybrid-eks
   labels:
     app: gateway-svc-tyk-hybrid-eks
@@ -19,4 +21,4 @@ spec:
   selector:
     app: gateway-tyk-hybrid-eks
     release: tyk-hybrid-eks
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
