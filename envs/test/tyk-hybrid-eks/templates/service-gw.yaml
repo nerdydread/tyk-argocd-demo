@@ -21,7 +21,7 @@ spec:
   - port: 80
     targetPort: 8080
     protocol: TCP
-    name: http
+    name: htt
   selector:
     app: gateway-tyk-hybrid-eks
     release: tyk-hybrid-eks
