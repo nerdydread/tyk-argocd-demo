@@ -7,7 +7,7 @@ spec:
   use_keyless: true
   #use_standard_auth: true
   tags:
-    - andy-eks
+    - travis-eks
     - edge
   protocol: http
   active: true
