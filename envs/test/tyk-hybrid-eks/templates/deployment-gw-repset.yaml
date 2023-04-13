@@ -37,7 +37,7 @@ spec:
           key: node-role.kubernetes.io/master
       containers:
       - name: gateway-tyk-hybrid
-        image: "tykio/tyk-gateway:v4.2.3"
+        image: "tykio/tyk-gateway:v4.3.3"
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
@@ -54,7 +54,7 @@ spec:
           - name: REDIGOCLUSTER_SHARDCOUNT
             value: "128"
           - name: TYK_GW_STORAGE_ADDRS
-            value: "andy-redis.ti3wwj.ng.0001.euw2.cache.amazonaws.com:6379"
+            value: "redis.demo.svc.cluster.local:6379"
           - name: TYK_GW_STORAGE_ENABLECLUSTER
             value: "false"
           - name: TYK_GW_STORAGE_DATABASE
@@ -84,7 +84,7 @@ spec:
                 name:  secrets-tyk-hybrid-eks 
                 key: APISecret
           - name: TYK_GW_SLAVEOPTIONS_CONNECTIONSTRING
-            value: "sticky-monocle-hyb.aws-use1.cloud-ara.tyk.io:443"
+            value: "reasonable-cracker-hyb.aws-use1.cloud-ara.tyk.io:443"
           - name: TYK_GW_SLAVEOPTIONS_USESSL
             value: "true"
           - name: TYK_GW_SLAVEOPTIONS_BINDTOSLUGSINSTEADOFLISTENPATHS
@@ -92,13 +92,13 @@ spec:
           - name: TYK_GW_SLAVEOPTIONS_SSLINSECURESKIPVERIFY
             value: "true"
           - name: TYK_GW_SLAVEOPTIONS_GROUPID
-            value: "andy-eks"
+            value: "travis-eks"
         # Enable backward compatibility to chart 0.5.1.
           - name: TYK_GW_DBAPPCONFOPTIONS_NODEISSEGMENTED
             value: "true"
         # Enable backward compatibility to chart 0.5.1.
           - name: TYK_GW_DBAPPCONFOPTIONS_TAGS
-            value: "andy-eks"
+            value: "travis-eks"
           - name: TYK_GW_POLICIES_ALLOWEXPLICITPOLICYID
             value: "true"
         command: ["/opt/tyk-gateway/tyk", "--conf=/etc/tyk-gateway/tyk.conf"]
