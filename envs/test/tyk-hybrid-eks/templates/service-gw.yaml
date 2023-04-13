@@ -21,4 +21,4 @@ spec:
   selector:
     app: gateway-tyk-hybrid-eks
     release: tyk-hybrid-eks
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
