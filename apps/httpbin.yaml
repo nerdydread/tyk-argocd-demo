@@ -8,7 +8,6 @@ spec:
   #use_standard_auth: true
   tags:
     - travis-eks
-    - edge
   protocol: http
   active: true
   proxy:
