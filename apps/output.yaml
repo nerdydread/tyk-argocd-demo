@@ -3,7 +3,6 @@ kind: ApiDefinition
 metadata:
   creationTimestamp: null
   name: httpbin-api-5
-  namespace: staging
 spec:
   CORS:
     allowed_headers:
